@@ -29,6 +29,7 @@ class vector
 public:
 	// 
     vector& operator=(const vector& rhs);
+    vector& operator=(vector&& rhs) noexcept;
 };
 
 
@@ -58,6 +59,58 @@ vector<T>& vector<T>::operator=(const vector& rhs)
     }
   }
   return *this;
+}
+
+// overloading operator 
+template <class T>
+vector<T>& vector<T>::operator=(vector&& rhs) noexcept
+{
+    destroy_and_recover(begin_, end_, cap_ - begin_);
+    begin_ = rhs.begin_;
+    end_ = rhs.end_;
+    cap_ = rhs.cap_;
+    rhs.begin_ = nullptr;
+    rhs.end_ = nullptr;
+    rhs.cap_ = nullptr;
+    return *this;
+}
+
+// overloading compare operator
+template <class T>
+bool operator==(const vector<T>& lhs, const vector<T>& rhs)
+{
+    return lhs.size() == rhs.size() &&
+        mystl::equal(lhs.begin(), lhs.end(), rhs.begin());
+}
+
+template <class T>
+bool operator<(const vector<T>& lhs, const vector<T>& rhs)
+{
+    return mystl::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+}
+
+template <class T>
+bool operator!=(const vector<T>& lhs, const vector<T>& rhs)
+{
+    return !(lhs == rhs);
+}
+
+template <class T>
+bool operator>(const vector<T>& lhs, const vector<T>& rhs)
+{
+    return rhs < lhs;
+}
+
+template <class T>
+bool operator<=(const vector<T>& lhs, const vector<T>& rhs)
+{
+    return !(rhs < lhs);
+}
+
+template <class T>
+bool operator>=(const vector<T>& lhs, const vector<T>& rhs)
+{
+    return !(lhs < rhs);
 }
 
 } // namespace mystl
